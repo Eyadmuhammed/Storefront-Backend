@@ -1,5 +1,12 @@
+import bcrypt from 'bcrypt';
 import db from '../database';
 import User from '../types/user.type';
+import config from '../config';
+
+const hashpassword = (password: string) => {
+    const salt = parseInt(config.salt as string, 10);
+    return bcrypt.hashSync(`${password}${config.pepper}`, 10);
+};
 
 class UserModel {
     // create user
@@ -10,7 +17,7 @@ class UserModel {
             const sql = `INSERT INTO users (email, user_name, first_name, last_name, password) values ($1, $2, $3, $4, $5) 
             RETURNING email, user_name, first_name, last_name`;
             //  run query sql
-            const result = await connection.query(sql, [u.email, u.user_name, u.first_name, u.last_name, u.password,]);
+            const result = await connection.query(sql, [u.email, u.user_name, u.first_name, u.last_name, hashpassword(u.password),]);
             // release connection
             connection.release();
             // returne created user
@@ -67,7 +74,7 @@ class UserModel {
                 u.user_name,
                 u.first_name,
                 u.last_name,
-                u.password,
+                hashpassword(u.password),
                 u.id,
             ]);
             // release connection
@@ -97,6 +104,33 @@ class UserModel {
         }
     }
     // authenticate user
+    async authenticate(email: string, password: string): Promise<User | null> {
+        try {
+            // open connection with db
+            const connection = await db.connect();
+            const sql = `SELECT password FROM users WHERE email=$1`;
+            //  run query sql
+            const result = await connection.query(sql, [email]);
+            if (result.rows.length) {
+                const { password: hashpassword } = result.rows[0];
+                const ispasswordvalid = bcrypt.compareSync(`${password}${config.pepper}`, hashpassword);
+                if (ispasswordvalid) {
+                    const userinfo = await connection.query(
+                        `SELECT id, email, user_name, first_name, last_name FROM users WHERE email = ($1)`, [email]);
+                    return userinfo.rows[0];
+                }
+            }
+
+            // release connection
+            connection.release();
+            // returne created user
+            return null;
+
+        } catch (error) {
+            throw new Error(`unable to login: ${(error as Error).message}`);
+        }
+
+    }
 }
 
 export default UserModel;

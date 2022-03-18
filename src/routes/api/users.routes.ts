@@ -11,6 +11,6 @@ routes.delete('/:id', controllers.deleteone);
 
 // routes.route('/').get(controllers.showall).post(controllers.create);
 
-
+routes.post('/authenticate', controllers.authenticate);
 
 export default routes;
