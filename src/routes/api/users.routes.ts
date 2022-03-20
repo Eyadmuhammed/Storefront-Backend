@@ -1,16 +1,16 @@
 import { Router } from "express";
 import * as controllers from '../../controllers/users.controllers';
+import validatemiddlware from "../../middleware/authentication.middleware";
 
 const routes = Router();
 
 routes.post('/', controllers.create);
-routes.get('/', controllers.showall);
-routes.get('/:id', controllers.showone);
-routes.patch('/:id', controllers.updateone);
-routes.delete('/:id', controllers.deleteone);
+routes.get('/', validatemiddlware, controllers.showall);
+routes.get('/:id', validatemiddlware, controllers.showone);
+routes.patch('/:id', validatemiddlware, controllers.updateone);
+routes.delete('/:id', validatemiddlware, controllers.deleteone);
 
-// routes.route('/').get(controllers.showall).post(controllers.create);
 
-routes.post('/authenticate', controllers.authenticate);
+routes.post('/login', controllers.login);
 
 export default routes;

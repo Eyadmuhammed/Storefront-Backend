@@ -104,7 +104,7 @@ class UserModel {
         }
     }
     // authenticate user
-    async authenticate(email: string, password: string): Promise<User | null> {
+    async login(email: string, password: string): Promise<User | null> {
         try {
             // open connection with db
             const connection = await db.connect();

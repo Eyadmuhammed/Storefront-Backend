@@ -78,10 +78,10 @@ export const deleteone = async (req: Request, res: Response, next: NextFunction)
 
 };
 
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email, password } = req.body;
-        const user = await userModel.authenticate(email, password);
+        const user = await userModel.login(email, password);
         const token = jwt.sign({ user }, config.token as unknown as string);
         if (!user) {
             return res.status(401).json({
@@ -92,7 +92,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
         return res.json({
             status: 'success',
             data: { ...user, token },
-            message: 'User authenticated Successfully',
+            message: 'User login Successfully',
         });
     } catch (error) {
         next(error);
