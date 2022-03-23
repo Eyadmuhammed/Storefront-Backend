@@ -13,7 +13,7 @@ const unauthorizedError = (next: NextFunction) => {
 const validatemiddlwaretoken = async (req: Request, _res: Response, next: NextFunction) => {
     try {
         // get authheader
-        // const authheader = req.get('Login');
+
         const authheader = req.get('Authorization');
         if (authheader) {
             const bearer = authheader.split(' ')[0].toLowerCase();

@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import UserModel from "../models/user.model";
 import jwt from 'jsonwebtoken';
 import config from "../config";
+import User from "../types/user.type";
 
 
 const userModel = new UserModel;
@@ -51,10 +52,18 @@ export const showone = async (req: Request, res: Response, next: NextFunction) =
 
 export const updateone = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = await userModel.updateone(req.body);
+        const user: User = {
+            email: req.body.email,
+            user_name: req.body.user_name,
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            password: req.body.password
+        };
+
+        const userupdates = await userModel.updateone(req.params.id, user);
         res.json({
             status: 'success',
-            data: { ...user },
+            data: { ...userupdates },
             message: 'User updated SUccessfully',
         });
     } catch (error) {

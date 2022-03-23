@@ -62,11 +62,11 @@ class UserModel {
         }
     }
     // update user
-    async updateone(u: User): Promise<User> {
+    async updateone(id: string, u: User): Promise<User> {
         try {
             // open connection with db
             const connection = await db.connect();
-            const sql = `UPDATE users SET  email=$1, user_name=$2, first_name=$3, last_name=$4, password=$5 WHERE id=$6  
+            const sql = `UPDATE users SET  email=$1, user_name=$2, first_name=$3, last_name=$4, password=$5 WHERE id=${id}  
             RETURNING email, user_name, first_name, last_name`;
             //  run query sql
             const result = await connection.query(sql, [
@@ -75,7 +75,6 @@ class UserModel {
                 u.first_name,
                 u.last_name,
                 hashpassword(u.password),
-                u.id,
             ]);
             // release connection
             connection.release();
