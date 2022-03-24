@@ -58,11 +58,4 @@ after runing the test start the server using
   npm run dev
 ```
 
-
-
-
-## the api link on the browser will be like
-
-```bash
-   http://localhost:3000/api/salahproject?filename=icelandwaterfall&width=200&height=100
-```
+ 
